@@ -5,7 +5,7 @@ import './index.css';
 import './custom.scss';
 import * as serviceWorker from './serviceWorker';
 
-import App from './components/App/app';
+import App from './components/App';
 import Firebase, { FirebaseContext } from './components/Firebase';
 
 ReactDOM.render(

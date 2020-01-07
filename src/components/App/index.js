@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { Route, BrowserRouter as Router } from 'react-router-dom';
 
-import Navigation from '../Navigation/navigation';
-import Landing from '../Landing/landing';
-import SignUp from '../SignUp/signup';
-import Login from '../Login/login';
-import ForgotPassword from '../ForgotPassword/forgotPassword';
-import Home from '../Home/home';
-import Account from '../Account/account';
-import Admin from '../Admin/admin';
+import Navigation from '../Navigation';
+import Landing from '../Landing';
+import SignUp from '../SignUp';
+import Login from '../Login';
+import ForgotPassword from '../ForgotPassword';
+import Home from '../Home';
+import Account from '../Account';
+import Admin from '../Admin';
 import * as ROUTES from '../../constants/routes';
 import { withFirebase } from '../Firebase';
 
@@ -27,6 +27,10 @@ class App extends Component {
                 ? this.setState({ authUser })
                 : this.setState({ authUser: null });
         });
+    }
+
+    componentWillUnmount() {
+        this.listener();
     }
 
     render() {
