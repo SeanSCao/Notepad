@@ -1,13 +1,17 @@
-import React, { Component } from 'react'
+import React from 'react';
 
-export class Account extends Component {
-    render() {
-        return (
+import { AuthUserContext, withAuthorization } from '../Session';
+
+const Account = () => (
+    <AuthUserContext.Consumer>
+        {authUser => (
             <div>
-
+                <h1>Account: {authUser.email}</h1>
             </div>
-        )
-    }
-}
+        )}
+    </AuthUserContext.Consumer>
+)
 
-export default Account
+const condition = authUser => !!authUser;
+
+export default withAuthorization(condition)(Account);

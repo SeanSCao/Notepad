@@ -1,4 +1,6 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+
+import { withAuthorization } from '../Session';
 
 export class Home extends Component {
     render() {
@@ -10,4 +12,6 @@ export class Home extends Component {
     }
 }
 
-export default Home
+const condition = authUser => !!authUser;
+
+export default withAuthorization(condition)(Home);
