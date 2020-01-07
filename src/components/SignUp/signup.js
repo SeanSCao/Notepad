@@ -7,8 +7,8 @@ import * as ROUTES from '../../constants/routes';
 
 function SignUp() {
     return (
-        <div>
-            <h1>Sign Up</h1>
+        <div className="container mt-4">
+            <h1 className="mb-2">Sign Up</h1>
             <SignUpForm />
         </div>
     )
@@ -64,35 +64,57 @@ class SignUpFormBase extends Component {
 
         return (
             <form onSubmit={this.onSubmit}>
-                <input
-                    name="username"
-                    value={username}
-                    onChange={this.onChange}
-                    type="text"
-                    placeholder="Full Name"
-                />
-                <input
-                    name="email"
-                    value={email}
-                    onChange={this.onChange}
-                    type="text"
-                    placeholder="Email Address"
-                />
-                <input
-                    name="passwordOne"
-                    value={passwordOne}
-                    onChange={this.onChange}
-                    type="password"
-                    placeholder="Password"
-                />
-                <input
-                    name="passwordTwo"
-                    value={passwordTwo}
-                    onChange={this.onChange}
-                    type="password"
-                    placeholder="Confirm Password"
-                />
-                <button type="submit">Sign Up</button>
+                <div className="form-group">
+                    <label for="name">Full Name</label>
+                    <input
+                        type="text"
+                        name="username"
+                        value={username}
+                        onChange={this.onChange}
+                        className="form-control"
+                        id="name"
+                        placeholder="Enter name" />
+                </div>
+                <div className="form-group">
+                    <label for="email">Email address</label>
+                    <input
+                        type="email"
+                        name="email"
+                        value={email}
+                        onChange={this.onChange}
+                        className="form-control"
+                        id="email"
+                        aria-describedby="emailHelp"
+                        placeholder="Enter email" />
+                    <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
+                </div>
+                <div className="form-group">
+                    <label for="passwordOne">Password</label>
+                    <input
+                        type="password"
+                        name="passwordOne"
+                        value={passwordOne}
+                        onChange={this.onChange}
+                        className="form-control"
+                        id="passwordOne"
+                        placeholder="Enter Password" />
+                </div>
+                <div className="form-group">
+                    <label for="passwordTwo">Confirm Password</label>
+                    <input
+                        type="password"
+                        name="passwordTwo"
+                        value={passwordTwo}
+                        onChange={this.onChange}
+                        className="form-control"
+                        id="passwordTwo"
+                        placeholder="Enter Password Again" />
+                </div>
+                <div className="form-group form-check">
+                    <input type="checkbox" className="form-check-input" id="check" />
+                    <label className="form-check-label" for="check">I agree to the terms and conditions</label>
+                </div>
+                <button type="submit" disabled={isInvalid} className="btn btn-primary">Sign Up</button>
                 {error && <p>{error.message}</p>}
             </form>
         )

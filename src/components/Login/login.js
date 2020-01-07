@@ -8,8 +8,8 @@ import * as ROUTES from '../../constants/routes';
 
 export default function Login() {
     return (
-        <div>
-            <h1>Login</h1>
+        <div className="container mt-4">
+            <h1 className="mb-2">Log In</h1>
             <SignInForm />
             <SignUpLink />
         </div>
@@ -50,23 +50,29 @@ export class LoginFormBase extends Component {
         const isInvalid = password === '' || email === '';
         return (
             <form onSubmit={this.onSubmit}>
-                <input
-                    name="email"
-                    value={email}
-                    onChange={this.onChange}
-                    type="text"
-                    placeholder="Email Address"
-                />
-                <input
-                    name="password"
-                    value={password}
-                    onChange={this.onChange}
-                    type="password"
-                    placeholder="Password"
-                />
-                <button disabled={isInvalid} type="submit">
-                    Sign In
-            </button>
+                <div className="form-group">
+                    <label for="email">Email Address</label>
+                    <input
+                        type="text"
+                        name="email"
+                        value={email}
+                        onChange={this.onChange}
+                        className="form-control"
+                        id="email"
+                        placeholder="Enter Email Address" />
+                </div>
+                <div className="form-group">
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        name="password"
+                        value={password}
+                        onChange={this.onChange}
+                        className="form-control"
+                        id="password"
+                        placeholder="Enter Password" />
+                </div>
+                <button type="submit" disabled={isInvalid} className="btn btn-primary">Log In</button>
                 {error && <p>{error.message}</p>}
             </form>
         )
