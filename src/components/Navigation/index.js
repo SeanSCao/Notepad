@@ -1,30 +1,31 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import SignOutButton from '../SignOut';
+import SignOutButton from '../Client/SignOut';
 import * as ROUTES from '../../constants/routes';
 import { AuthUserContext } from '../Session';
 
 const Navigation = ({ authUser }) => (
     <div>
         <AuthUserContext.Consumer>
-            {authUser => authUser ? <NavigationAuth /> : <NavigationNonAuth />}
+            {authUser => authUser ? <React.Fragment ></React.Fragment> : <NavigationNonAuth />}
         </AuthUserContext.Consumer>
     </div>
 );
 
 const NavigationAuth = () => (
-    <ul className="nav flex-column">
-        <li className="nav-item">
-            <Link to={ROUTES.HOME} className="nav-link">Home</Link>
-        </li>
-        <li className="nav-item">
-            <Link to={ROUTES.ACCOUNT} className="nav-link">Account</Link>
-        </li>
-        <li className="nav-item">
-            <SignOutButton />
-        </li>
-    </ul>
+    <React.Fragment ></React.Fragment>
+    // <ul className="nav flex-column">
+    //     <li className="nav-item">
+    //         <Link to={ROUTES.CLIENT} className="nav-link">Notes</Link>
+    //     </li>
+    //     <li className="nav-item">
+    //         <Link to={ROUTES.ACCOUNT} className="nav-link">Account</Link>
+    //     </li>
+    //     <li className="nav-item">
+    //         <SignOutButton />
+    //     </li>
+    // </ul>
 );
 
 const NavigationNonAuth = () => (

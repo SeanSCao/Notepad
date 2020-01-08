@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import * as ROUTES from '../../constants/routes';
-import { withFirebase } from '../Firebase';
+import * as ROUTES from '../../../constants/routes';
+import { withFirebase } from '../../Firebase';
 
 const SignOutButton = ({ firebase }) => (
     <Link to={ROUTES.LANDING} className="nav-link" onClick={firebase.doSignOut}>Sign Out</Link>

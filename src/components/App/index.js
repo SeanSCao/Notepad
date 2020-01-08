@@ -6,9 +6,7 @@ import Landing from '../Landing';
 import SignUp from '../SignUp';
 import Login from '../Login';
 import ForgotPassword from '../ForgotPassword';
-import Home from '../Home';
-import Account from '../Account';
-import Admin from '../Admin';
+import Client from '../Client';
 
 import * as ROUTES from '../../constants/routes';
 import { withAuthentication } from '../Session';
@@ -22,9 +20,7 @@ const App = () => (
             <Route path={ROUTES.SIGN_UP} component={SignUp} />
             <Route path={ROUTES.LOGIN} component={Login} />
             <Route path={ROUTES.FORGOT_PASSWORD} component={ForgotPassword} />
-            <Route path={ROUTES.HOME} component={Home} />
-            <Route path={ROUTES.ACCOUNT} component={Account} />
-            <Route path={ROUTES.ADMIN} component={Admin} />
+            <Route path={ROUTES.CLIENT} component={Client} />
         </div>
     </Router>
 )

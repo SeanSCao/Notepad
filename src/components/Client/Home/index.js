@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { withAuthorization } from '../Session';
+import { withAuthorization } from '../../Session';
 
 export class Home extends Component {
     render() {
