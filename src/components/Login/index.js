@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 
+import { ForgotPasswordLink } from '../ForgotPassword';
 import { SignUpLink } from '../SignUp';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
@@ -11,6 +12,7 @@ export default function Login() {
         <div className="container mt-4">
             <h1 className="mb-2">Log In</h1>
             <SignInForm />
+            <ForgotPasswordLink />
             <SignUpLink />
         </div>
     )
