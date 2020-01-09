@@ -12,6 +12,7 @@ export default function Login() {
         <div className="container mt-4">
             <h1 className="mb-2">Log In</h1>
             <SignInForm />
+            <SignInGoogle />
             <ForgotPasswordLink />
             <SignUpLink />
         </div>
@@ -25,7 +26,7 @@ const INITIAL_STATE = {
 };
 
 
-export class LoginFormBase extends Component {
+class LoginFormBase extends Component {
     constructor(props) {
         super(props);
         this.state = { ...INITIAL_STATE };
@@ -81,7 +82,52 @@ export class LoginFormBase extends Component {
     }
 }
 
+class SignInGoogleBase extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { error: null };
+    }
+    onSubmit = e => {
+        this.props.firebase
+            .doSignInWithGoogle()
+            .then(socialAuthUser => {
+                // Create a user in your Firebase Realtime Database
+                return this.props.firebase
+                    .user(socialAuthUser.user.uid)
+                    .set({
+                        username: socialAuthUser.user.displayName,
+                        email: socialAuthUser.user.email,
+                        roles: {},
+                    });
+            })
+            .then(() => {
+                this.setState({ error: null });
+                this.props.history.push(ROUTES.CLIENT);
+            })
+            .catch(error => {
+                this.setState({ error });
+            });
+        e.preventDefault();
+    };
+    render() {
+        const { error } = this.state;
+        return (
+            <form onSubmit={this.onSubmit}>
+                <button type="submit" className="btn btn-primary">Sign In with Google</button>
+                {error && <p>{error.message}</p>}
+            </form>
+        );
+    }
+}
+
 const SignInForm = compose(
     withRouter,
     withFirebase
 )(LoginFormBase);
+
+const SignInGoogle = compose(
+    withRouter,
+    withFirebase,
+)(SignInGoogleBase);
+
+export { SignInForm, SignInGoogle };
