@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import SignOutButton from '../../Client/SignOut';
 import * as ROUTES from '../../../constants/routes';
+import * as ROLES from '../../../constants/roles';
 
 export default function ClientNavigation() {
     return (
