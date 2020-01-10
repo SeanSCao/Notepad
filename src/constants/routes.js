@@ -6,3 +6,4 @@ export const FORGOT_PASSWORD = '/forgot-password';
 export const CLIENT = '/client';
 export const ACCOUNT = '/client/account';
 export const ADMIN = '/client/admin';
+export const ADMIN_USER_DETAILS = '/client/admin/user/:id';
