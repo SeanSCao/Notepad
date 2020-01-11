@@ -1,4 +1,7 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+
+import * as ROUTES from '../../constants/routes';
 
 export class Landing extends Component {
     render() {
@@ -11,7 +14,7 @@ export class Landing extends Component {
 
                         <p>Organise your quests, find and share information faster.</p>
                         <p class="lead">
-                            <a class="btn btn-primary btn-lg" href="#" role="button">Sign Up For Free</a>
+                            <Link to={ROUTES.SIGN_UP} class="btn btn-primary btn-lg" role="button">Sign Up For Free</Link>
                         </p>
                     </div>
                 </div>

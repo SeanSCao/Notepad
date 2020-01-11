@@ -20,7 +20,7 @@ const SIGN_IN_METHODS = [
 const Account = () => (
     <AuthUserContext.Consumer>
         {authUser => (
-            <div>
+            <div className="col ml-2 mt-2">
                 <h1>Account: {authUser.email}</h1>
                 <h2>Forgot Password</h2>
                 <ForgotPasswordForm />

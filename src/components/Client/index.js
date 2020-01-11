@@ -1,8 +1,8 @@
 import React from 'react';
-import { Route, BrowserRouter as Router } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 
 import ClientNavigation from './ClientNavigation';
-import Home from './Home';
+import Dictionary from './Dictionary';
 import Account from './Account';
 import Admin from './Admin';
 
@@ -14,8 +14,9 @@ function Client() {
     return (
         <AuthUserContext.Consumer>
             {authUser => (
-                <div>
-                    <ClientNavigation></ClientNavigation>
+                <div className="row vh-100">
+                    <ClientNavigation user={authUser}></ClientNavigation>
+                    <Route path={ROUTES.DICTIONARY} render={() => <Dictionary authUser={authUser} />} />
                     <Route path={ROUTES.ACCOUNT} component={Account} />
                     <Route path={ROUTES.ADMIN} component={Admin} />
                 </div>
