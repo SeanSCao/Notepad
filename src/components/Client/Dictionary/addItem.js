@@ -1,4 +1,7 @@
-import React from 'react'
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+import * as ROUTES from '../../../constants/routes';
 
 export default function AddItem(props) {
     return (
@@ -25,7 +28,10 @@ export default function AddItem(props) {
                     id="desc"
                     placeholder="Add Description" />
             </div>
-            <button type="submit" className="btn btn-primary">Add</button>
+            <Link to={ROUTES.DICTIONARY} className="text-white">
+                <button className="btn btn-dark mr-2">Cancel</button>
+            </Link>
+            <button type="submit" className="btn btn-dark">Add</button>
         </form>
     )
 }
