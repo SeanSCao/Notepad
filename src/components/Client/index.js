@@ -16,7 +16,7 @@ function Client() {
             {authUser => (
                 <div className="row vh-100">
                     <ClientNavigation user={authUser}></ClientNavigation>
-                    <Route path={ROUTES.DICTIONARY} render={() => <Dictionary authUser={authUser} />} />
+                    <Route path={ROUTES.DICTIONARY} component={Dictionary} />
                     <Route path={ROUTES.ACCOUNT} component={Account} />
                     <Route path={ROUTES.ADMIN} component={Admin} />
                 </div>

@@ -1,22 +1,35 @@
 import React, { Component } from 'react';
-import { Link, Route, Switch } from 'react-router-dom';
+import { withRouter, Link, Route, Switch } from 'react-router-dom';
 import { compose } from 'recompose';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 
 import { AuthUserContext, withAuthorization, withEmailVerification } from '../../Session';
 import { withFirebase } from '../../Firebase';
 import AddItem from './addItem';
-import { ItemList, Item } from './item';
+import { ItemList } from './itemList';
 
 import * as ROUTES from '../../../constants/routes';
 
+const Dictionary = () => (
+    <AuthUserContext.Consumer>
+        {authUser => (
+            <div className="col overflow-auto h-100 mt-4 pt-4">
+                <Switch>
+                    <Route exact path={ROUTES.DICTIONARY} render={() => <DictionaryList authUser={authUser} />} />
+                    <Route exact path={ROUTES.DICTIONARY_DETAILS} render={(matchProps) => <DictionaryItem {...matchProps} authUser={authUser} />} />
+                    <Route exact path={ROUTES.DICTIONARY_NEW} render={() => <AddItem authUser={authUser} />} />
+                </Switch>
+            </div>
+        )}
+    </AuthUserContext.Consumer>
+)
 
-class Dictionary extends Component {
+class DictionaryListBase extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            title: '',
-            desc: '',
             loading: false,
             dictionary: [],
             filter: '',
@@ -51,16 +64,6 @@ class Dictionary extends Component {
         this.setState({ [e.target.name]: e.target.value });
     }
 
-    onCreateItem = (e, authUser) => {
-        e.preventDefault();
-        this.props.firebase.dictionary(authUser.uid).push({
-            title: this.state.title,
-            desc: this.state.desc,
-            userId: authUser.uid,
-        });
-        this.setState({ title: '', desc: '' });
-    };
-
     onRemoveItem = (authuid, uid) => {
         this.props.firebase.dictionaryItem(authuid, uid).remove();
     };
@@ -77,46 +80,75 @@ class Dictionary extends Component {
     }
 
     render() {
-        const { title, desc, dictionary, filteredDictionary, loading } = this.state;
+        const { dictionary, filteredDictionary, loading } = this.state;
         return (
-            <AuthUserContext.Consumer>
-                {authUser => (
-                    <div className="col overflow-auto h-100 py-4">
-                        {loading && <div>Loading ...</div>}
-                        <Switch>
-                            <Route exact path={ROUTES.DICTIONARY} render={() => <div>
-                                <div className="container my-4">
-                                    <div className="form-group mx-auto w-50 d-flex">
-                                        <Link to={ROUTES.DICTIONARY_NEW} className="text-white">
-                                            <button className="btn btn-dark mr-2">Add</button>
-                                        </Link>
-                                        <input className="form-control" value={this.state.filter} onChange={this.filterDictionary} placeholder="Search" />
-                                    </div>
-                                </div>
-                                {
-                                    dictionary ?
-                                        <ItemList
-                                            items={filteredDictionary}
-                                            onRemoveItem={this.onRemoveItem}
-                                            authUser={authUser} />
-                                        :
-                                        <div>There are no items...</div>
-                                }
-                            </div>
-                            } />
-                            <Route path={ROUTES.DICTIONARY_NEW} render={() => <AddItem
-                                authUser={authUser}
-                                title={title}
-                                desc={desc}
-                                onChange={this.onChange}
-                                onCreateItem={this.onCreateItem} />} />
-                        </Switch>
-                    </div>
-                )}
-            </AuthUserContext.Consumer>
+            <React.Fragment>
+                <div className="form-group mx-auto w-50 d-flex">
+                    <Link to={ROUTES.DICTIONARY_NEW} className="text-white">
+                        <button className="btn btn-dark mr-2">Add</button>
+                    </Link>
+                    <input className="form-control" value={this.state.filter} onChange={this.filterDictionary} placeholder="Search" />
+                </div>
+                {loading && <div className="d-flex h-100 justify-content-center align-items-center"><FontAwesomeIcon icon={faSpinner} spin size="6x" /></div>
+                }
+                {
+                    dictionary ?
+                        <ItemList
+                            items={filteredDictionary}
+                            onRemoveItem={this.onRemoveItem}
+                            authUser={this.props.authUser} />
+                        :
+                        <div>There are no items...</div>
+                }
+            </React.Fragment>
         );
     }
 }
+
+class DictionaryItemBase extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            loading: false,
+            item: {},
+        };
+    }
+
+    componentDidMount() {
+        this.setState({ loading: true });
+        this.props.firebase.dictionaryItem(this.props.authUser.uid, this.props.match.params.id)
+            .on('value', snapshot => {
+                this.setState({
+                    item: snapshot.val(),
+                    loading: false,
+                });
+            });
+    }
+
+    render() {
+        return (
+            <div className="card mx-auto w-75">
+                <div className="card-body">
+                    <div className="d-flex">
+                        <h5 className="card-title text-dark">{this.state.item.title}</h5>
+                        {/* <FontAwesomeIcon icon={faTrashAlt} onClick={() => onRemoveItem(this.props.authUser.uid, this.state.item.uid)} className="ml-auto" /> */}
+                    </div>
+                    <h6 className="card-subtitle mb-2 text-muted">Test</h6>
+                    <p className="card-text">{this.state.item.desc}</p>
+                </div>
+            </div >
+        )
+    }
+}
+
+const DictionaryList = compose(
+    withRouter,
+    withFirebase
+)(DictionaryListBase)
+
+const DictionaryItem = compose(
+    withFirebase
+)(DictionaryItemBase);
 
 const condition = authUser => !!authUser;
 
