@@ -82,7 +82,12 @@ class Firebase {
     // *** Dictionary Api *** //
 
     dictionaryItem = (authuid, uid) => this.db.ref(`dictionary/${authuid}/${uid}`);
-    dictionary = uid => this.db.ref(`dictionary/${uid}`);
+    dictionary = authuid => this.db.ref(`dictionary/${authuid}`);
+
+    // *** Note Api *** //
+
+    notebook = authuid => this.db.ref(`notebook/${authuid}`);
+    note = (authuid, uid) => this.db.ref(`notebook/${authuid}/${uid}`);
 }
 
 export default Firebase;

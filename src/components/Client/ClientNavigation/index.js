@@ -19,7 +19,7 @@ export default function ClientNavigation(props) {
                     <Link to={ROUTES.DICTIONARY} className="nav-link text-white">Dictionary</Link>
                 </li>
                 <li className="nav-item">
-                    <Link to={ROUTES.NOTES} className="nav-link text-white">Notes</Link>
+                    <Link to={ROUTES.NOTEBOOK} className="nav-link text-white">Notes</Link>
                 </li>
                 <li className="nav-item">
                     <SignOutButton />

@@ -15,7 +15,7 @@ import * as ROUTES from '../../../constants/routes';
 const Dictionary = () => (
     <AuthUserContext.Consumer>
         {authUser => (
-            <div className="col overflow-auto h-100 mt-4 pt-4">
+            <div className="col overflow-auto h-100 mt-4">
                 <Switch>
                     <Route exact path={ROUTES.DICTIONARY} render={() => <DictionaryList authUser={authUser} />} />
                     <Route exact path={ROUTES.DICTIONARY_DETAILS} render={(matchProps) => <DictionaryItem {...matchProps} authUser={authUser} />} />
@@ -127,16 +127,20 @@ class DictionaryItemBase extends Component {
 
     render() {
         return (
-            <div className="card mx-auto w-75">
-                <div className="card-body">
-                    <div className="d-flex">
-                        <h5 className="card-title text-dark">{this.state.item.title}</h5>
-                        {/* <FontAwesomeIcon icon={faTrashAlt} onClick={() => onRemoveItem(this.props.authUser.uid, this.state.item.uid)} className="ml-auto" /> */}
+            <div>
+                <Link to={ROUTES.DICTIONARY} className="text-dark">Back</Link>
+                <div className="card mx-auto w-75">
+                    <div className="card-body">
+                        <div className="d-flex">
+                            <h5 className="card-title text-dark">{this.state.item.title}</h5>
+                            {/* <FontAwesomeIcon icon={faTrashAlt} onClick={() => onRemoveItem(this.props.authUser.uid, this.state.item.uid)} className="ml-auto" /> */}
+                        </div>
+                        <h6 className="card-subtitle mb-2 text-muted">Test</h6>
+                        <p className="card-text">{this.state.item.desc}</p>
                     </div>
-                    <h6 className="card-subtitle mb-2 text-muted">Test</h6>
-                    <p className="card-text">{this.state.item.desc}</p>
-                </div>
-            </div >
+                </div >
+            </div>
+
         )
     }
 }

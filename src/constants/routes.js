@@ -9,8 +9,8 @@ export const DICTIONARY = '/client/dictionary';
 export const DICTIONARY_DETAILS = '/client/dictionary/:id';
 export const DICTIONARY_NEW = '/client/dictionary/new';
 
-export const NOTES = '/client/note';
-export const NOTES_DETAILS = '/client/note/:id';
+export const NOTEBOOK = '/client/notebook';
+export const NOTEBOOK_NOTE = '/client/notebook/:id';
 
 export const ACCOUNT = '/client/account';
 

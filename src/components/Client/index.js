@@ -5,6 +5,7 @@ import ClientNavigation from './ClientNavigation';
 import Dictionary from './Dictionary';
 import Account from './Account';
 import Admin from './Admin';
+import Notebook from './Notebook';
 
 import * as ROUTES from '../../constants/routes';
 
@@ -18,6 +19,7 @@ function Client() {
                     <ClientNavigation user={authUser}></ClientNavigation>
                     <Route path={ROUTES.DICTIONARY} component={Dictionary} />
                     <Route path={ROUTES.ACCOUNT} component={Account} />
+                    <Route path={ROUTES.NOTEBOOK} component={Notebook} />
                     <Route path={ROUTES.ADMIN} component={Admin} />
                 </div>
             )}

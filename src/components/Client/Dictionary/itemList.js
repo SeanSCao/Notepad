@@ -6,7 +6,7 @@ import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import * as ROUTES from '../../../constants/routes';
 
 const ItemList = ({ items, onRemoveItem, authUser }) => (
-    <div className="card-columns">
+    <div className="d-flex flex-wrap">
         {items.map(item => (
             <Item key={item.uid} item={item} onRemoveItem={onRemoveItem} authUser={authUser} />
         ))}
@@ -17,7 +17,7 @@ const Item = ({ item, onRemoveItem, authUser }) => {
     if (item.desc.length > 100) {
         item.desc = item.desc.slice(0, 100) + '...';
     }
-    return <div className="card" style={{ width: "18rem" }}>
+    return <div className="card mx-auto my-2" style={{ width: "18rem" }}>
         <div className="card-body">
             <div className="d-flex">
                 <Link to={{ pathname: `${ROUTES.DICTIONARY}/${item.uid}`, state: { item }, }} className="text-decoration-none">
