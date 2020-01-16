@@ -103,13 +103,26 @@ class SignInGoogleBase extends Component {
                 if (!socialAuthUser.additionalUserInfo.isNewUser) {
                     return;
                 }
+                // Create default notebook
+                this.props.firebase
+                    .notebook(socialAuthUser.user.uid)
+                    .set({
+                        owner: socialAuthUser.user.uid,
+                        title: 'My Notebook',
+                        default: true,
+                        createdAt: this.props.firebase.serverValue.TIMESTAMP,
+                        editedAt: this.props.firebase.serverValue.TIMESTAMP,
+                        shared: [],
+                        notes: [],
+                    });
 
                 // Create a user in your Firebase Realtime Database
                 return this.props.firebase
                     .user(socialAuthUser.user.uid)
                     .set({
                         username: socialAuthUser.user.displayName,
-                        email: socialAuthUser.user.email
+                        email: socialAuthUser.user.email,
+                        notebooks: [socialAuthUser.user.uid]
                     });
             })
             .then(() => {

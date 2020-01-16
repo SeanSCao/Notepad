@@ -52,6 +52,19 @@ class SignUpFormBase extends Component {
         this.props.firebase
             .doCreateUserWithEmailAndPassword(email, passwordOne)
             .then(authUser => {
+                // Create default notebook in Firebase database
+                this.props.firebase
+                    .notebook(authUser.user.uid)
+                    .set({
+                        owner: authUser.user.uid,
+                        title: 'My Notebook',
+                        default: true,
+                        createdAt: this.props.firebase.serverValue.TIMESTAMP,
+                        editedAt: this.props.firebase.serverValue.TIMESTAMP,
+                        shared: [],
+                        notes: [],
+                    });
+
                 // Create a user in Firebase database
                 return this.props.firebase
                     .user(authUser.user.uid)
@@ -59,6 +72,7 @@ class SignUpFormBase extends Component {
                         username,
                         email,
                         roles,
+                        notebooks: [authUser.user.uid],
                     });
             })
             .then(() => {

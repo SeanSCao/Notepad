@@ -17,9 +17,9 @@ const Dictionary = () => (
         {authUser => (
             <div className="col overflow-auto h-100 mt-4">
                 <Switch>
+                    <Route exact path={ROUTES.DICTIONARY_NEW} render={() => <AddItem authUser={authUser} />} />
                     <Route exact path={ROUTES.DICTIONARY} render={() => <DictionaryList authUser={authUser} />} />
                     <Route exact path={ROUTES.DICTIONARY_DETAILS} render={(matchProps) => <DictionaryItem {...matchProps} authUser={authUser} />} />
-                    <Route exact path={ROUTES.DICTIONARY_NEW} render={() => <AddItem authUser={authUser} />} />
                 </Switch>
             </div>
         )}
@@ -73,9 +73,11 @@ class DictionaryListBase extends Component {
         if (e.target.value === '') {
             this.setState({ filteredDictionary: this.state.dictionary });
         } else {
-            const PATTERN = this.state.filter.toLowerCase();
-            const filtered = this.state.dictionary.filter(function (item) { return item.title.toLowerCase().includes(PATTERN) || item.desc.toLowerCase().includes(PATTERN) });
-            this.setState({ filteredDictionary: filtered });
+            if (this.state.dictionary) {
+                const PATTERN = this.state.filter.toLowerCase();
+                const filtered = this.state.dictionary.filter(function (item) { return item.title.toLowerCase().includes(PATTERN) || item.desc.toLowerCase().includes(PATTERN) });
+                this.setState({ filteredDictionary: filtered });
+            }
         }
     }
 

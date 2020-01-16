@@ -17,6 +17,7 @@ class Firebase {
     constructor() {
         app.initializeApp(config);
 
+        this.serverValue = app.database.ServerValue;
         this.emailAuthProvider = app.auth.EmailAuthProvider;
         this.auth = app.auth();
         this.db = app.database();
@@ -80,14 +81,15 @@ class Firebase {
     users = () => this.db.ref('users');
 
     // *** Dictionary Api *** //
+    // dictuid = authuid
+    dictionaryItem = (dictuid, itemuid) => this.db.ref(`dictionaries/${dictuid}/${itemuid}`);
+    dictionary = dictuid => this.db.ref(`dictionaries/${dictuid}`);
 
-    dictionaryItem = (authuid, uid) => this.db.ref(`dictionary/${authuid}/${uid}`);
-    dictionary = authuid => this.db.ref(`dictionary/${authuid}`);
+    // *** Notebook Api *** //
 
-    // *** Note Api *** //
-
-    notebook = authuid => this.db.ref(`notebook/${authuid}`);
-    note = (authuid, uid) => this.db.ref(`notebook/${authuid}/${uid}`);
+    // default bookid = authid
+    notebook = (bookid) => this.db.ref(`notebooks/${bookid}`);
+    note = (noteuid) => this.db.ref(`notes/${noteuid}`);
 }
 
 export default Firebase;

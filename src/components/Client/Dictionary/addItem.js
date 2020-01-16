@@ -21,6 +21,8 @@ class AddItemBase extends Component {
             title: this.state.title,
             desc: this.state.desc,
             userId: authUser.uid,
+            createdAt: this.props.firebase.serverValue.TIMESTAMP,
+            editedAt: this.props.firebase.serverValue.TIMESTAMP,
         }, () => {
             this.props.history.push(ROUTES.DICTIONARY);
         });
