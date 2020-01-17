@@ -54,11 +54,10 @@ class SignUpFormBase extends Component {
             .then(authUser => {
                 // Create default notebook in Firebase database
                 this.props.firebase
-                    .notebook(authUser.user.uid)
+                    .notebook(authUser.user.uid, 'default')
                     .set({
                         owner: authUser.user.uid,
                         title: 'My Notebook',
-                        default: true,
                         createdAt: this.props.firebase.serverValue.TIMESTAMP,
                         editedAt: this.props.firebase.serverValue.TIMESTAMP,
                         shared: [],
@@ -72,7 +71,7 @@ class SignUpFormBase extends Component {
                         username,
                         email,
                         roles,
-                        notebooks: [authUser.user.uid],
+                        notebooks: { 'default': true },
                     });
             })
             .then(() => {

@@ -20,7 +20,7 @@ class AddItemBase extends Component {
         this.props.firebase.dictionary(authUser.uid).push({
             title: this.state.title,
             desc: this.state.desc,
-            userId: authUser.uid,
+            owner: authUser.uid,
             createdAt: this.props.firebase.serverValue.TIMESTAMP,
             editedAt: this.props.firebase.serverValue.TIMESTAMP,
         }, () => {

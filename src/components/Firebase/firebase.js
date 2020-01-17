@@ -87,9 +87,10 @@ class Firebase {
 
     // *** Notebook Api *** //
 
-    // default bookid = authid
-    notebook = (bookid) => this.db.ref(`notebooks/${bookid}`);
-    note = (noteuid) => this.db.ref(`notes/${noteuid}`);
+    // default bookid = 'default'
+    notebook = (authuid, bookuid) => this.db.ref(`notebooks/${authuid}/${bookuid}`);
+    notes = (authuid) => this.db.ref(`notes/${authuid}`);
+    note = (authuid, noteuid) => this.db.ref(`notes/${authuid}/${noteuid}`);
 }
 
 export default Firebase;

@@ -16,7 +16,7 @@ function Client() {
         <AuthUserContext.Consumer>
             {authUser => (
                 <div className="row vh-100">
-                    <ClientNavigation user={authUser}></ClientNavigation>
+                    <ClientNavigation authUser={authUser}></ClientNavigation>
                     <Route path={ROUTES.DICTIONARY} component={Dictionary} />
                     <Route path={ROUTES.ACCOUNT} component={Account} />
                     <Route path={ROUTES.NOTEBOOK} component={Notebook} />

@@ -105,11 +105,10 @@ class SignInGoogleBase extends Component {
                 }
                 // Create default notebook
                 this.props.firebase
-                    .notebook(socialAuthUser.user.uid)
+                    .notebook(socialAuthUser.user.uid, 'default')
                     .set({
                         owner: socialAuthUser.user.uid,
                         title: 'My Notebook',
-                        default: true,
                         createdAt: this.props.firebase.serverValue.TIMESTAMP,
                         editedAt: this.props.firebase.serverValue.TIMESTAMP,
                         shared: [],
@@ -122,7 +121,7 @@ class SignInGoogleBase extends Component {
                     .set({
                         username: socialAuthUser.user.displayName,
                         email: socialAuthUser.user.email,
-                        notebooks: [socialAuthUser.user.uid]
+                        notebooks: { 'default': true }
                     });
             })
             .then(() => {

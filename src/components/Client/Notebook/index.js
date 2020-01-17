@@ -19,19 +19,18 @@ class Notebook extends Component {
         };
     }
     componentDidMount() {
-        const query = queryString.parse(this.props.location.search);
-        this.setState({ query: { b: query.b, n: query.n } });
     }
+
     render() {
         return (
             <AuthUserContext.Consumer>
                 {authUser => (
                     <React.Fragment>
-                        <div className="col overflow-auto h-100">
-                            <NoteList authUser={authUser} query={this.state.query} />
+                        <div className="col overflow-auto h-100 m-0 p-0 border-right">
+                            <NoteList authUser={authUser} />
                         </div>
                         <div className="col overflow-auto h-100">
-                            <Note authUser={authUser} query={this.state.query} />
+                            <Note authUser={authUser} />
                         </div>
                     </React.Fragment>
                 )}
