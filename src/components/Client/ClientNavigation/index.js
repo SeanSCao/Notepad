@@ -21,7 +21,7 @@ function ClientNavigation(props) {
     };
 
     return (
-        <div className="col-xl-1 col-2 bg-dark">
+        <div className="col-auto bg-dark">
             <ul className="nav flex-column">
                 <li className="nav-item">
                     {props.authUser.username ?
@@ -29,8 +29,8 @@ function ClientNavigation(props) {
                         : <Link to={ROUTES.ACCOUNT} className="nav-link text-white">User</Link>
                     }
                 </li>
-                <li className="nav-item">
-                    <a onClick={e => onCreateNote(e, props.authUser)} className="cursor-pointer nav-link text-white">Add Note</a>
+                <li className="nav-item p-0">
+                    <a onClick={e => onCreateNote(e, props.authUser)} className="cursor-pointer nav-link text-wrap text-white">Add Note</a>
                 </li>
                 <li className="nav-item">
                     <Link to={ROUTES.DICTIONARY} className="nav-link text-white">Dictionary</Link>

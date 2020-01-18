@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 
 import ClientNavigation from './ClientNavigation';
 import Dictionary from './Dictionary';
@@ -17,10 +17,12 @@ function Client() {
             {authUser => (
                 <div className="row vh-100">
                     <ClientNavigation authUser={authUser}></ClientNavigation>
-                    <Route path={ROUTES.DICTIONARY} component={Dictionary} />
-                    <Route path={ROUTES.ACCOUNT} component={Account} />
-                    <Route path={ROUTES.NOTEBOOK} component={Notebook} />
-                    <Route path={ROUTES.ADMIN} component={Admin} />
+                    <Switch>
+                        <Route path={ROUTES.DICTIONARY} component={Dictionary} />
+                        <Route path={ROUTES.ACCOUNT} component={Account} />
+                        <Route path={ROUTES.NOTEBOOK} render={(props) => <Notebook {...props} authUser={authUser} />} />
+                        <Route path={ROUTES.ADMIN} component={Admin} />
+                    </Switch>
                 </div>
             )}
         </AuthUserContext.Consumer>

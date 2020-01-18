@@ -22,3 +22,9 @@ code {
 .cursor-pointer {
   cursor: pointer;
 }
+
+[contenteditable="true"]:active,
+[contenteditable="true"]:focus {
+  border: none;
+  outline: none;
+}
