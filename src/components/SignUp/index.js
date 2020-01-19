@@ -12,6 +12,9 @@ function SignUp() {
         <div className="container mt-4">
             <h1 className="mb-2">Sign Up</h1>
             <SignUpForm />
+            <div className="text-center">
+                <p>Sign up with</p>
+            </div>
             <SignInGoogle />
         </div>
     )
@@ -171,7 +174,7 @@ class SignUpFormBase extends Component {
 const SignUpLink = () => (
     <p>
         Don't have an account?
-        <Link to={ROUTES.SIGN_UP}>Sign Up</Link>
+        <Link to={ROUTES.SIGN_UP}> Sign Up</Link>
     </p>
 );
 

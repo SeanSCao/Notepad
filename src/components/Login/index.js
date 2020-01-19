@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 
 import { ForgotPasswordLink } from '../ForgotPassword';
 import { SignUpLink } from '../SignUp';
@@ -12,9 +14,11 @@ export default function Login() {
         <div className="container mt-4">
             <h1 className="mb-2">Log In</h1>
             <SignInForm />
-            <SignInGoogle />
             <ForgotPasswordLink />
-            <SignUpLink />
+            <SignUpLink /><div className="text-center">
+                <p>Login with</p>
+            </div>
+            <SignInGoogle />
         </div>
     )
 }
@@ -139,10 +143,10 @@ class SignInGoogleBase extends Component {
     render() {
         const { error } = this.state;
         return (
-            <form onSubmit={this.onSubmit}>
-                <button type="submit" className="btn btn-primary">Sign In with Google</button>
+            <div className="w-100 d-flex">
+                <FontAwesomeIcon icon={faGoogle} size="2x" onClick={this.onSubmit} className="cursor-pointer mx-auto" />
                 {error && <p>{error.message}</p>}
-            </form>
+            </div>
         );
     }
 }

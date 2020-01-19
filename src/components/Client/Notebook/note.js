@@ -1,16 +1,11 @@
 import React from 'react';
-import { useMemo, useState, useEffect, useCallback, useRef } from 'react';
-import { compose } from 'recompose';
-import queryString from 'query-string';
-import isHotkey from 'is-hotkey';
-import { Editable, withReact, useSlate, Slate } from 'slate-react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
+import { Editable, withReact, Slate } from 'slate-react';
 import { Editor, Transforms, createEditor, Text, Node } from 'slate';
 import { withHistory } from 'slate-history';
 import { debounce } from 'lodash';
 
 import { withFirebase } from '../../Firebase';
-import * as ROUTES from '../../../constants/routes';
-// import debounce from '../../../helpers';
 
 const Note = (props) => {
     const defaultValue = [
@@ -19,10 +14,6 @@ const Note = (props) => {
             children: [{ text: 'Start typing...' }],
         },
     ]
-    let initialValue = []
-    if (props.note.body) {
-        initialValue = JSON.parse(props.note.body);
-    }
     const editor = useMemo(() => withHistory(withReact(createEditor())), []);
     const [value, setValue] = useState(defaultValue);
     const [title, setTitle] = useState('');
@@ -107,19 +98,14 @@ const Note = (props) => {
                 CustomEditor.toggleBoldMark(editor)
                 break
             }
+
+            default: {
+                break
+            }
         }
     }
 
-    function usePrevious(value) {
-        const ref = useRef();
-        useEffect(() => {
-            ref.current = value;
-        });
-        return ref.current;
-    }
-
     useEffect(() => {
-        console.log(props.note);
         setUid(props.note.uid);
         setTitle(props.note.title);
         if (props.note.body) {
@@ -129,34 +115,16 @@ const Note = (props) => {
         }
     }, [props.note]);
 
-    // useEffect(() => {
-    //     setUid(note.)
-    //     if (uid != props.note.uid) {
-    //         setUid(props.note.uid);
-    //         setTitle(props.note.title);
-    //         if (props.note.body) {
-    //             setValue(JSON.parse(props.note.body));
-    //         } else {
-    //             setValue([
-    //                 {
-    //                     type: 'paragraph',
-    //                     children: [{ text: 'Start Typing' }],
-    //                 },
-    //             ]);
-    //         }
-    //     }
-    // });
-
     return (
         <React.Fragment>
             <form onBlur={e => saveTitle(e)} onSubmit={e => saveTitle(e)}>
-                <div className="form-group">
+                <div className="form-group mt-2">
                     <input
                         type="text"
                         name="title"
                         value={title}
                         onChange={onChangeTitle}
-                        className=""
+                        className="form-control-lg pl-0 border-0"
                         id="title" />
                 </div>
             </form>

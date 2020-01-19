@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { compose } from 'recompose';
 import queryString from 'query-string';
 
-import { AuthUserContext, withAuthorization, withEmailVerification } from '../../Session';
+import { withAuthorization, withEmailVerification } from '../../Session';
 import { withFirebase } from '../../Firebase';
 import NoteList from './noteList';
 import Note from './note';

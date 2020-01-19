@@ -22,7 +22,7 @@ export class NoteList extends Component {
         const { notebook, notes, authUser, selectNote } = this.props;
         return (
             <React.Fragment>
-                <h2>{notebook.title ? notebook.title : 'All Notes'}</h2>
+                <h2 className="mt-2 ml-2">{notebook.title ? notebook.title : 'All Notes'}</h2>
                 <div className="list-group">
                     {
                         notes ?
@@ -61,12 +61,16 @@ const NoteBase = ({ note, authUser, selectNote }) => {
         const day = Math.floor(diff / 86400);
         updatedTime = day + " days";
     }
+    let title = note.title;
+    if (note.title.length > 15) {
+        title = note.title.slice(0, 15) + '...';
+    }
     return (
         <Link to={`${ROUTES.NOTEBOOK}?n=${note.uid}`}
             onClick={() => selectNote(note)}
             className="list-group-item list-group-item-action flex-column align-items-start rounded-0 border-right-0 border-left-0">
             <div className="d-flex w-100 justify-content-between">
-                <h5 className="mb-1">{note.title}</h5>
+                <h5 className="mb-1">{title}</h5>
                 <small>{updatedTime} ago</small>
             </div>
             <pre><p className="mb-1">{note.preview ? note.preview : ' '}</p></pre>
