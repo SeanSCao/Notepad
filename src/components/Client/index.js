@@ -20,7 +20,7 @@ function Client() {
                     <Switch>
                         <Route path={ROUTES.DICTIONARY} component={Dictionary} />
                         <Route path={ROUTES.ACCOUNT} component={Account} />
-                        <Route path={ROUTES.NOTEBOOK} render={(props) => <Notebook {...props} authUser={authUser} />} />
+                        <Route path={ROUTES.NOTEBOOK} render={() => <Notebook authUser={authUser} />} />
                         <Route path={ROUTES.ADMIN} component={Admin} />
                     </Switch>
                 </div>

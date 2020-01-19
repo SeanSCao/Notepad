@@ -30,7 +30,7 @@ function ClientNavigation(props) {
                     }
                 </li>
                 <li className="nav-item p-0">
-                    <a onClick={e => onCreateNote(e, props.authUser)} className="cursor-pointer nav-link text-wrap text-white">Add Note</a>
+                    <p onClick={e => onCreateNote(e, props.authUser)} className="cursor-pointer nav-link text-wrap text-white mb-0">Add Note</p>
                 </li>
                 <li className="nav-item">
                     <Link to={ROUTES.DICTIONARY} className="nav-link text-white">Dictionary</Link>

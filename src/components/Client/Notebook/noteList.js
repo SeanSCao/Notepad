@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 
 import { compose } from 'recompose';
-import queryString from 'query-string';
 
 import { withFirebase } from '../../Firebase';
 import * as ROUTES from '../../../constants/routes';
@@ -20,7 +19,7 @@ export class NoteList extends Component {
     }
 
     render() {
-        const { notebook, notes, authUser } = this.props;
+        const { notebook, notes, authUser, selectNote } = this.props;
         return (
             <React.Fragment>
                 <h2>{notebook.title ? notebook.title : 'All Notes'}</h2>
@@ -28,7 +27,7 @@ export class NoteList extends Component {
                     {
                         notes ?
                             notes.map(note => (
-                                <Note key={note.uid} note={note} authUser={authUser} />
+                                <Note key={note.uid} note={note} authUser={authUser} selectNote={selectNote} />
                             ))
                             :
                             <div>There are no notes...</div>
@@ -39,7 +38,7 @@ export class NoteList extends Component {
     }
 }
 
-const NoteBase = ({ note, authUser }) => {
+const NoteBase = ({ note, authUser, selectNote }) => {
     const editedAt = new Date(note.editedAt);
     const diff = (Date.now() - editedAt) / 1000;
     let updatedTime = '';
@@ -63,7 +62,9 @@ const NoteBase = ({ note, authUser }) => {
         updatedTime = day + " days";
     }
     return (
-        <Link to={`${ROUTES.NOTEBOOK}?n=${note.uid}`} className="list-group-item list-group-item-action flex-column align-items-start rounded-0 border-right-0 border-left-0">
+        <Link to={`${ROUTES.NOTEBOOK}?n=${note.uid}`}
+            onClick={() => selectNote(note)}
+            className="list-group-item list-group-item-action flex-column align-items-start rounded-0 border-right-0 border-left-0">
             <div className="d-flex w-100 justify-content-between">
                 <h5 className="mb-1">{note.title}</h5>
                 <small>{updatedTime} ago</small>

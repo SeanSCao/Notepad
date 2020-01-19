@@ -1,5 +1,5 @@
 import React from 'react';
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useMemo, useState, useEffect, useCallback, useRef } from 'react';
 import { compose } from 'recompose';
 import queryString from 'query-string';
 import isHotkey from 'is-hotkey';
@@ -13,18 +13,20 @@ import * as ROUTES from '../../../constants/routes';
 // import debounce from '../../../helpers';
 
 const Note = (props) => {
-    let initialValue = [
+    const defaultValue = [
         {
             type: 'paragraph',
-            children: [{ text: 'A line of text in a paragraph.' }],
+            children: [{ text: 'Start typing...' }],
         },
     ]
+    let initialValue = []
     if (props.note.body) {
         initialValue = JSON.parse(props.note.body);
     }
     const editor = useMemo(() => withHistory(withReact(createEditor())), []);
-    const [value, setValue] = useState(initialValue);
-    const [title, setTitle] = useState(props.note.title);
+    const [value, setValue] = useState(defaultValue);
+    const [title, setTitle] = useState('');
+    const [uid, setUid] = useState('');
 
     const renderElement = useCallback(props => {
         switch (props.element.type) {
@@ -51,7 +53,7 @@ const Note = (props) => {
     const saveTitle = (e) => {
         e.preventDefault();
         props.firebase
-            .note(props.authUser.uid, props.note.uid)
+            .note(props.authUser.uid, uid)
             .update({
                 title,
                 editedAt: props.firebase.serverValue.TIMESTAMP,
@@ -60,7 +62,7 @@ const Note = (props) => {
 
     const handler = useCallback(debounce((value) => {
         saveContent(value);
-    }, 1500), []);
+    }, 1500), [props.note]);
 
     const serialize = value => {
         return (
@@ -107,6 +109,43 @@ const Note = (props) => {
             }
         }
     }
+
+    function usePrevious(value) {
+        const ref = useRef();
+        useEffect(() => {
+            ref.current = value;
+        });
+        return ref.current;
+    }
+
+    useEffect(() => {
+        console.log(props.note);
+        setUid(props.note.uid);
+        setTitle(props.note.title);
+        if (props.note.body) {
+            setValue(JSON.parse(props.note.body));
+        } else {
+            setValue(defaultValue);
+        }
+    }, [props.note]);
+
+    // useEffect(() => {
+    //     setUid(note.)
+    //     if (uid != props.note.uid) {
+    //         setUid(props.note.uid);
+    //         setTitle(props.note.title);
+    //         if (props.note.body) {
+    //             setValue(JSON.parse(props.note.body));
+    //         } else {
+    //             setValue([
+    //                 {
+    //                     type: 'paragraph',
+    //                     children: [{ text: 'Start Typing' }],
+    //                 },
+    //             ]);
+    //         }
+    //     }
+    // });
 
     return (
         <React.Fragment>

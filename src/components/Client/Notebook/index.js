@@ -18,12 +18,11 @@ class Notebook extends Component {
             notes: [],
             filter: '',
             filteredNotes: [],
-            query: {},
         };
     }
     componentDidMount() {
         this.setState({ loading: true });
-        this.setState({ query: queryString.parse(this.props.location.search) });
+        const query = queryString.parse(this.props.location.search);
 
         this.props.firebase.notes(this.props.authUser.uid).on('value', snapshot => {
             const notesObject = snapshot.val();
@@ -34,17 +33,21 @@ class Notebook extends Component {
                     ...notesObject[key],
                     uid: key,
                 }));
-                if (this.state.query.n) {
-                    const note = tempList.find(element => element.uid == this.state.query.n)
-                    this.setState({ note: note });
-                } else {
-                    this.setState({ note: tempList[0] });
+                if (!this.state.note) {
+                    if (query.n) {
+                        const note = tempList.find(element => element.uid === query.n)
+                        this.setState({ note: note });
+                    } else {
+                        const tempNote = tempList[0];
+                        this.setState({ note: tempNote }, () => {
+                            this.props.history.push(`${ROUTES.NOTEBOOK}?n=${this.state.note.uid}`);
+                        });
+                    }
                 }
                 this.setState({ notes: tempList, filteredNotes: tempList, loading: false });
             } else {
                 this.setState({ notes: null, note: null, loading: false });
             }
-
         });
 
 
@@ -74,41 +77,36 @@ class Notebook extends Component {
 
     }
 
+    // componentDidUpdate(prevProps) {
+    //     if (this.props.location.search !== prevProps.location.search) {
+    //         this.props.history.push(`${ROUTES.NOTEBOOK}?n=${this.state.note.uid}`);
+    //     }
+    // }
+
     componentWillUnmount() {
         this.props.firebase.notebook().off();
     }
 
+    selectNote = (note) => {
+        this.setState({ note });
+        this.props.history.push(`${ROUTES.NOTEBOOK}?n=${note.uid}`)
+    };
+
     render() {
-        const { notebook, notes, note } = this.state;
+        const { notebook, notes } = this.state;
         const { authUser } = this.props;
         return (
             <React.Fragment>
                 <div className="col-4 col-lg-3 overflow-auto h-100 m-0 p-0 border-right">
-                    <NoteList authUser={authUser} notebook={notebook} notes={notes} />
+                    <NoteList authUser={authUser} notebook={notebook} notes={notes} selectNote={this.selectNote} />
                 </div>
                 <div className="col overflow-auto h-100">
-                    {note ? <Note authUser={authUser} note={note} /> : null}
+                    {this.state.note ? <Note authUser={authUser} note={this.state.note} /> : null}
                 </div>
             </React.Fragment>
         )
     }
 }
-
-
-// const Notebook = () => (
-//     <AuthUserContext.Consumer>
-//         {authUser => (
-//             <React.Fragment>
-//                 <div className="col overflow-auto h-100">
-//                     <NoteList authUser={authUser} />
-//                 </div>
-//                 <div className="col overflow-auto h-100">
-//                     <Note authUser={authUser} />
-//                 </div>
-//             </React.Fragment>
-//         )}
-//     </AuthUserContext.Consumer>
-// )
 
 const condition = authUser => !!authUser;
 
