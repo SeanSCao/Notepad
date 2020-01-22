@@ -7,6 +7,8 @@ import { debounce } from 'lodash';
 
 import { withFirebase } from '../../Firebase';
 
+const LIST_TYPES = ['numbered-list', 'bulleted-list']
+
 const Note = (props) => {
     const defaultValue = [
         {
@@ -19,18 +21,8 @@ const Note = (props) => {
     const [title, setTitle] = useState('');
     const [uid, setUid] = useState('');
 
-    const renderElement = useCallback(props => {
-        switch (props.element.type) {
-            case 'code':
-                return <CodeElement {...props} />
-            default:
-                return <DefaultElement {...props} />
-        }
-    }, [])
-
-    const renderLeaf = useCallback(props => {
-        return <Leaf {...props} />
-    }, [])
+    const renderElement = useCallback(props => <Element {...props} />, [])
+    const renderLeaf = useCallback(props => <Leaf {...props} />, [])
 
     const onChange = (value) => {
         setValue(value);
@@ -68,6 +60,7 @@ const Note = (props) => {
     const saveContent = (value) => {
         const body = JSON.stringify(value);
         let preview = serialize(value);
+        preview = preview.replace(/(\r\n|\n|\r)/gm, ' ');
         if (preview.length > 20) {
             preview = preview.slice(0, 20) + '...';
         }
@@ -134,18 +127,65 @@ const Note = (props) => {
                     <button
                         onMouseDown={event => {
                             event.preventDefault()
-                            CustomEditor.toggleBoldMark(editor)
-                        }}
-                    >
+                            CustomEditor.toggleMark(editor, 'bold')
+                        }}>
                         Bold
                     </button>
                     <button
                         onMouseDown={event => {
                             event.preventDefault()
-                            CustomEditor.toggleCodeBlock(editor)
-                        }}
-                    >
-                        Code Block
+                            CustomEditor.toggleMark(editor, 'underline')
+                        }}>
+                        Underline
+                    </button>
+                    <button
+                        onMouseDown={event => {
+                            event.preventDefault()
+                            CustomEditor.toggleMark(editor, 'italic')
+                        }}>
+                        Italic
+                    </button>
+                    <button
+                        onMouseDown={event => {
+                            event.preventDefault()
+                            CustomEditor.toggleBlock(editor, 'code')
+                        }}>
+                        Code
+                    </button>
+                    <button
+                        onMouseDown={event => {
+                            event.preventDefault()
+                            CustomEditor.toggleBlock(editor, 'h1')
+                        }}>
+                        H1
+                    </button>
+                    <button
+                        onMouseDown={event => {
+                            event.preventDefault()
+                            CustomEditor.toggleBlock(editor, 'h2')
+                        }}>
+                        H2
+                    </button>
+                    <button
+                        onMouseDown={event => {
+                            event.preventDefault()
+                            CustomEditor.toggleBlock(editor, 'h3')
+                        }}>
+                        H3
+                    </button>
+                    <button
+                        onMouseDown={event => {
+                            event.preventDefault()
+                            CustomEditor.toggleBlock(editor, 'numbered-list')
+                        }}>
+                        OL
+                    </button>
+                    <button
+                        onMouseDown={event => {
+                            event.preventDefault()
+                            CustomEditor.toggleBlock(editor, 'bulleted-list')
+                        }}>
+                        UL
                     </button>
                 </div>
                 <Editable
@@ -160,47 +200,78 @@ const Note = (props) => {
 }
 
 const CustomEditor = {
-    isBoldMarkActive(editor) {
+    isBlockActive(editor, format) {
         const [match] = Editor.nodes(editor, {
-            match: n => n.bold === true,
-            universal: true,
+            match: n => n.type === format,
         })
 
         return !!match
     },
 
-    isCodeBlockActive(editor) {
-        const [match] = Editor.nodes(editor, {
-            match: n => n.type === 'code',
+    isMarkActive(editor, format) {
+        const marks = Editor.marks(editor)
+        return marks ? marks[format] === true : false
+    },
+
+    toggleBlock(editor, format) {
+        const isActive = this.isBlockActive(editor, format)
+        const isList = LIST_TYPES.includes(format)
+
+        Transforms.unwrapNodes(editor, {
+            match: n => LIST_TYPES.includes(n.type),
+            split: true,
         })
 
-        return !!match
+        Transforms.setNodes(editor, {
+            type: isActive ? 'paragraph' : isList ? 'list-item' : format,
+        })
+
+        if (!isActive && isList) {
+            const block = { type: format, children: [] }
+            Transforms.wrapNodes(editor, block)
+        }
     },
 
-    toggleBoldMark(editor) {
-        const isActive = CustomEditor.isBoldMarkActive(editor)
-        Transforms.setNodes(
-            editor,
-            { bold: isActive ? null : true },
-            { match: n => Text.isText(n), split: true }
-        )
-    },
+    toggleMark(editor, format) {
+        const isActive = this.isMarkActive(editor, format)
 
-    toggleCodeBlock(editor) {
-        const isActive = CustomEditor.isCodeBlockActive(editor)
-        Transforms.setNodes(
-            editor,
-            { type: isActive ? null : 'code' },
-            { match: n => Editor.isBlock(editor, n) }
-        )
+        if (isActive) {
+            Editor.removeMark(editor, format)
+        } else {
+            Editor.addMark(editor, format, true)
+        }
     },
 }
 
+const Element = ({ attributes, children, element }) => {
+    switch (element.type) {
+        case 'block-quote':
+            return <blockquote {...attributes}>{children}</blockquote>
+        case 'bulleted-list':
+            return <ul {...attributes}>{children}</ul>
+        case 'heading-one':
+            return <h1 {...attributes}>{children}</h1>
+        case 'heading-two':
+            return <h2 {...attributes}>{children}</h2>
+        case 'list-item':
+            return <li {...attributes}>{children}</li>
+        case 'numbered-list':
+            return <ol {...attributes}>{children}</ol>
+        default:
+            return <p {...attributes}>{children}</p>
+    }
+}
+
 const Leaf = props => {
+    const inlineStyle = {
+        fontWeight: (props.leaf.bold ? 'bold' : 'normal'),
+        fontStyle: (props.leaf.italic ? 'italic' : 'normal'),
+        textDecoration: (props.leaf.underline ? 'underline' : 'none')
+    }
     return (
         <span
             {...props.attributes}
-            style={{ fontWeight: props.leaf.bold ? 'bold' : 'normal' }}
+            style={inlineStyle}
         >
             {props.children}
         </span>
@@ -211,6 +282,30 @@ const CodeElement = props => {
     return (
         <pre {...props.attributes}>
             <code>{props.children}</code>
+        </pre>
+    )
+}
+
+const H1Element = props => {
+    return (
+        <pre {...props.attributes}>
+            <h1>{props.children}</h1>
+        </pre>
+    )
+}
+
+const H2Element = props => {
+    return (
+        <pre {...props.attributes}>
+            <h2>{props.children}</h2>
+        </pre>
+    )
+}
+
+const H3Element = props => {
+    return (
+        <pre {...props.attributes}>
+            <h3>{props.children}</h3>
         </pre>
     )
 }
