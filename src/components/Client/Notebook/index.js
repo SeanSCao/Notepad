@@ -18,6 +18,7 @@ class Notebook extends Component {
             notes: [],
             filter: '',
             filteredNotes: [],
+            dictionary: [],
         };
     }
     componentDidMount() {
@@ -48,6 +49,22 @@ class Notebook extends Component {
             } else {
                 this.setState({ notes: null, note: null, loading: false });
             }
+        });
+
+        this.props.firebase.dictionary(this.props.authUser.uid).on('value', snapshot => {
+            const dictionaryObject = snapshot.val();
+
+            if (dictionaryObject) {
+                // convert dictionary from snapshot
+                const tempList = Object.keys(dictionaryObject).map(key => ({
+                    ...dictionaryObject[key],
+                    uid: key,
+                }));
+                this.setState({ dictionary: tempList});
+            } else {
+                this.setState({ dictionary: null });
+            }
+
         });
 
 
@@ -101,7 +118,7 @@ class Notebook extends Component {
                     <NoteList authUser={authUser} notebook={notebook} notes={notes} selectNote={this.selectNote} />
                 </div>
                 <div className="col overflow-auto h-100">
-                    {this.state.note ? <Note authUser={authUser} note={this.state.note} /> : null}
+                    {this.state.note ? <Note authUser={authUser} note={this.state.note} dictionary={this.state.dictionary}/> : null}
                 </div>
             </React.Fragment>
         )

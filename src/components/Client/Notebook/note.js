@@ -1,32 +1,70 @@
 import React from 'react';
-import { useMemo, useState, useEffect, useCallback } from 'react';
-import { Editable, withReact, Slate } from 'slate-react';
-import { Editor, Transforms, createEditor, Text, Node } from 'slate';
+import { useMemo, useState, useEffect, useCallback, useRef } from 'react';
+import {
+    Slate,
+    Editable,
+    ReactEditor,
+    withReact,
+    useSelected,
+    useFocused,
+} from 'slate-react';
+import { Editor, Transforms, createEditor, Range, Text, Node } from 'slate';
 import { withHistory } from 'slate-history';
 import { debounce } from 'lodash';
 
 import { withFirebase } from '../../Firebase';
-
-const LIST_TYPES = ['numbered-list', 'bulleted-list']
+import { CustomEditor, Portal } from './editor';
 
 const Note = (props) => {
+    const ref = useRef();
     const defaultValue = [
         {
             type: 'paragraph',
             children: [{ text: 'Start typing...' }],
         },
     ]
-    const editor = useMemo(() => withHistory(withReact(createEditor())), []);
+    const editor = useMemo(
+        () => withMentions(withReact(withHistory(createEditor()))),
+        []
+    )
     const [value, setValue] = useState(defaultValue);
+    const [target, setTarget] = useState();
+    const [index, setIndex] = useState(0);
+    const [search, setSearch] = useState('');
     const [title, setTitle] = useState('');
     const [uid, setUid] = useState('');
+    const [chars, setChars] = useState([]);
 
-    const renderElement = useCallback(props => <Element {...props} />, [])
-    const renderLeaf = useCallback(props => <Leaf {...props} />, [])
+    const renderElement = useCallback(props => <Element {...props} />, []);
+    const renderLeaf = useCallback(props => <Leaf {...props} />, []);
 
     const onChange = (value) => {
         setValue(value);
         handler(value);
+
+        const { selection } = editor;
+
+        if (selection && Range.isCollapsed(selection)) {
+            const [start] = Range.edges(selection)
+            const wordBefore = Editor.before(editor, start, { unit: 'word' })
+            const before = wordBefore && Editor.before(editor, wordBefore)
+            const beforeRange = before && Editor.range(editor, before, start)
+            const beforeText = beforeRange && Editor.string(editor, beforeRange)
+            const beforeMatch = beforeText && beforeText.match(/^@(\w+)$/)
+            const after = Editor.after(editor, start)
+            const afterRange = Editor.range(editor, start, after)
+            const afterText = Editor.string(editor, afterRange)
+            const afterMatch = afterText.match(/^(\s|$)/)
+
+            if (beforeMatch && afterMatch) {
+                setTarget(beforeRange)
+                setSearch(beforeMatch[1])
+                setIndex(0)
+                return
+            }
+        }
+
+        setTarget(null)
     }
 
     const onChangeTitle = e => {
@@ -73,30 +111,36 @@ const Note = (props) => {
             });
     }
 
-    const onKeyDown = event => {
-        if (!event.ctrlKey) {
-            return
-        }
-
-        // Replace the `onKeyDown` logic with our new commands.
-        switch (event.key) {
-            case '`': {
-                event.preventDefault()
-                CustomEditor.toggleCodeBlock(editor)
-                break
+    const onKeyDown = useCallback(
+        event => {
+            if (target) {
+                switch (event.key) {
+                    case 'ArrowDown':
+                        event.preventDefault()
+                        const prevIndex = index >= chars.length - 1 ? 0 : index + 1
+                        setIndex(prevIndex)
+                        break
+                    case 'ArrowUp':
+                        event.preventDefault()
+                        const nextIndex = index <= 0 ? chars.length - 1 : index - 1
+                        setIndex(nextIndex)
+                        break
+                    case 'Tab':
+                    case 'Enter':
+                        event.preventDefault()
+                        Transforms.select(editor, target)
+                        insertMention(editor, chars[index])
+                        setTarget(null)
+                        break
+                    case 'Escape':
+                        event.preventDefault()
+                        setTarget(null)
+                        break
+                }
             }
-
-            case 'b': {
-                event.preventDefault()
-                CustomEditor.toggleBoldMark(editor)
-                break
-            }
-
-            default: {
-                break
-            }
-        }
-    }
+        },
+        [index, search, target]
+    )
 
     useEffect(() => {
         setUid(props.note.uid);
@@ -107,6 +151,22 @@ const Note = (props) => {
             setValue(defaultValue);
         }
     }, [props.note]);
+
+    useEffect(() => {
+        setChars(props.dictionary.filter(item =>
+            item.title.toLowerCase().startsWith(search.toLowerCase())
+        ));
+    }, [props.dictionary]);
+
+    useEffect(() => {
+        if (target && chars.length > 0) {
+            const el = ref.current
+            const domRange = ReactEditor.toDOMRange(editor, target)
+            const rect = domRange.getBoundingClientRect()
+            el.style.top = `${rect.top + window.pageYOffset + 24}px`
+            el.style.left = `${rect.left + window.pageXOffset}px`
+        }
+    }, [chars.length, editor, index, search, target])
 
     return (
         <React.Fragment>
@@ -193,70 +253,83 @@ const Note = (props) => {
                     renderLeaf={renderLeaf}
                     onKeyDown={onKeyDown}
                 />
+                {target && chars.length > 0 && (
+                    <Portal>
+                        <div
+                            ref={ref}
+                            style={{
+                                top: '-9999px',
+                                left: '-9999px',
+                                position: 'absolute',
+                                zIndex: 1,
+                                padding: '3px',
+                                background: 'white',
+                                borderRadius: '4px',
+                                boxShadow: '0 1px 5px rgba(0,0,0,.2)',
+                            }}
+                        >
+                            {chars.map((char, i) => (
+                                <div
+                                    key={char}
+                                    style={{
+                                        padding: '1px 3px',
+                                        borderRadius: '3px',
+                                        background: i === index ? '#B4D5FF' : 'transparent',
+                                    }}
+                                >
+                                    {char.title}
+                                </div>
+                            ))}
+                        </div>
+                    </Portal>
+                )}
             </Slate>
         </React.Fragment>
 
     )
 }
 
-const CustomEditor = {
-    isBlockActive(editor, format) {
-        const [match] = Editor.nodes(editor, {
-            match: n => n.type === format,
-        })
+const withMentions = editor => {
+    const { isInline, isVoid } = editor
 
-        return !!match
-    },
+    editor.isInline = element => {
+        return element.type === 'mention' ? true : isInline(element)
+    }
 
-    isMarkActive(editor, format) {
-        const marks = Editor.marks(editor)
-        return marks ? marks[format] === true : false
-    },
+    editor.isVoid = element => {
+        return element.type === 'mention' ? true : isVoid(element)
+    }
 
-    toggleBlock(editor, format) {
-        const isActive = this.isBlockActive(editor, format)
-        const isList = LIST_TYPES.includes(format)
-
-        Transforms.unwrapNodes(editor, {
-            match: n => LIST_TYPES.includes(n.type),
-            split: true,
-        })
-
-        Transforms.setNodes(editor, {
-            type: isActive ? 'paragraph' : isList ? 'list-item' : format,
-        })
-
-        if (!isActive && isList) {
-            const block = { type: format, children: [] }
-            Transforms.wrapNodes(editor, block)
-        }
-    },
-
-    toggleMark(editor, format) {
-        const isActive = this.isMarkActive(editor, format)
-
-        if (isActive) {
-            Editor.removeMark(editor, format)
-        } else {
-            Editor.addMark(editor, format, true)
-        }
-    },
+    return editor
 }
 
-const Element = ({ attributes, children, element }) => {
+const insertMention = (editor, character) => {
+    const mention = { type: 'mention', character, children: [{ text: '' }] }
+    Transforms.insertNodes(editor, mention)
+    Transforms.move(editor)
+}
+
+const Element = props => {
+    const { attributes, children, element } = props
     switch (element.type) {
         case 'block-quote':
             return <blockquote {...attributes}>{children}</blockquote>
         case 'bulleted-list':
             return <ul {...attributes}>{children}</ul>
-        case 'heading-one':
+        case 'h1':
             return <h1 {...attributes}>{children}</h1>
-        case 'heading-two':
+        case 'h2':
             return <h2 {...attributes}>{children}</h2>
+        case 'h3':
+            return <h3 {...attributes}>{children}</h3>
         case 'list-item':
             return <li {...attributes}>{children}</li>
         case 'numbered-list':
             return <ol {...attributes}>{children}</ol>
+        case 'code':
+            return <CodeElement {...props} />
+        case 'mention':
+            return <MentionElement {...props} />
         default:
             return <p {...attributes}>{children}</p>
     }
@@ -286,32 +359,42 @@ const CodeElement = props => {
     )
 }
 
-const H1Element = props => {
+const MentionElement = ({ attributes, children, element }) => {
+    const selected = useSelected()
+    const focused = useFocused()
     return (
-        <pre {...props.attributes}>
-            <h1>{props.children}</h1>
-        </pre>
+        <span
+            {...attributes}
+            contentEditable={false}
+            onMouseOver={console.log('hi')}
+            style={{
+                padding: '3px 3px 2px',
+                margin: '0 1px',
+                verticalAlign: 'baseline',
+                display: 'inline-block',
+                borderRadius: '4px',
+                backgroundColor: '#eee',
+                fontSize: '0.9em',
+                boxShadow: selected ? '0 0 0 2px #B4D5FF' : 'none',
+            }}
+        >
+            @{element.character.title}
+            {children}
+        </span>
     )
 }
 
-const H2Element = props => {
-    return (
-        <pre {...props.attributes}>
-            <h2>{props.children}</h2>
-        </pre>
-    )
-}
-
-const H3Element = props => {
-    return (
-        <pre {...props.attributes}>
-            <h3>{props.children}</h3>
-        </pre>
-    )
-}
-
-const DefaultElement = props => {
-    return <p {...props.attributes}>{props.children}</p>
-}
+const CHARACTERS = [
+    'Aayla Secura',
+    'Adi Gallia',
+    'Admiral Dodd Rancit',
+    'Admiral Firmus Piett',
+    'Admiral Gial Ackbar',
+    'Admiral Ozzel',
+    'Admiral Raddus',
+    'Admiral Terrinald Screed',
+    'Admiral Trench',
+    'Admiral U.O. Statura',
+    'Agen Kolar',];
 
 export default withFirebase(Note);
