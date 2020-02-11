@@ -10,9 +10,9 @@ export class Landing extends Component {
                 <div class="jumbotron">
                     <div class="container">
                         <h1 class="display-4">Hello!</h1>
-                        <p class="lead">This is a simple notepad app that allows you to create a database of elements to mention within throughout your quest planning.</p>
+                        <p class="lead">This is a simple notepad app that allows you to create a database of elements to mention within your notes.</p>
 
-                        <p>Organise your quests, find and share information faster.</p>
+                        <p>Define custom elements and organize your ideas.</p>
                         <p class="lead">
                             <Link to={ROUTES.SIGN_UP} class="btn btn-primary btn-lg" role="button">Sign Up For Free</Link>
                         </p>
