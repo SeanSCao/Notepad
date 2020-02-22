@@ -2,10 +2,18 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
+
 const ForgotPassword = () => (
-    <div className="container mt-4">
-        <h1 className="mb-2">PasswordForget</h1>
-        <ForgotPasswordForm />
+    <div className="vh-100 d-flex align-items-center justify-content-center bg-light">
+        <div className="card border-0 shadow my-auto w-auto w-m-50 rounded">
+            <div className="card-body">
+                <h1 className="text-center mb-5">Notepad</h1>
+                <h5 className="card-title">Forgot your password?</h5>
+                <p className="m-0">To reset your password, please enter your email address.</p>
+                <p>We will send instructions for resetting your password to your email.</p>
+                <ForgotPasswordForm />
+            </div>
+        </div>
     </div>
 );
 const INITIAL_STATE = {
@@ -38,7 +46,6 @@ class ForgotPasswordFormBase extends Component {
         return (
             <form onSubmit={this.onSubmit}>
                 <div className="form-group">
-                    <label for="email">Email address</label>
                     <input
                         type="text"
                         name="email"
@@ -58,7 +65,7 @@ class ForgotPasswordFormBase extends Component {
 }
 const ForgotPasswordLink = () => (
     <p>
-        <Link to={ROUTES.FORGOT_PASSWORD}>Forgot Password?</Link>
+        <Link to={ROUTES.FORGOT_PASSWORD}>Forgot your password?</Link>
     </p>
 );
 export default ForgotPassword;

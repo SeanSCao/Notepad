@@ -9,14 +9,16 @@ import { SignInGoogle } from '../Login';
 
 function SignUp() {
     return (
-        <div className="container mt-4">
-            <h1 className="mb-2">Sign Up</h1>
-            <SignUpForm />
-            <div className="text-center">
-                <p>Sign up with</p>
+        <div className="vh-100 d-flex align-items-center justify-content-center bg-light">
+            <div className="card border-0 shadow my-auto w-75 rounded min-width" style={{ maxWidth: "500px", }}>
+                <div className="card-body">
+                    <h1 className="text-center mb-5">Notepad</h1>
+                    <SignInGoogle />
+                    <hr className="my-4" />
+                    <SignUpForm />
+                </div>
             </div>
-            <SignInGoogle />
-        </div>
+        </div >
     )
 }
 
@@ -31,12 +33,12 @@ const INITIAL_STATE = {
 
 const ERROR_CODE_ACCOUNT_EXISTS = 'auth/email-already-in-use';
 const ERROR_MSG_ACCOUNT_EXISTS = `
-  An account with this E-Mail address already exists.
-  Try to login with this account instead. If you think the
-  account is already used from one of the social logins, try
-  to sign-in with one of them. Afterward, associate your accounts
-  on your personal account page.
-`;
+          An account with this E-Mail address already exists.
+          Try to login with this account instead. If you think the
+          account is already used from one of the social logins, try
+          to sign-in with one of them. Afterward, associate your accounts
+          on your personal account page.
+        `;
 
 class SignUpFormBase extends Component {
     constructor(props) {
@@ -97,12 +99,16 @@ class SignUpFormBase extends Component {
         this.setState({ [e.target.name]: e.target.value });
     };
 
+    handleCheckboxChange = event =>
+        this.setState({ terms: event.target.checked })
+
     render() {
         const {
             username,
             email,
             passwordOne,
             passwordTwo,
+            terms,
             error,
         } = this.state;
 
@@ -114,8 +120,8 @@ class SignUpFormBase extends Component {
 
         return (
             <form onSubmit={this.onSubmit}>
+                <h5>Sign up with email</h5>
                 <div className="form-group">
-                    <label for="name">Full Name</label>
                     <input
                         type="text"
                         name="username"
@@ -123,10 +129,9 @@ class SignUpFormBase extends Component {
                         onChange={this.onChange}
                         className="form-control"
                         id="name"
-                        placeholder="Enter name" />
+                        placeholder="What should we call you?" />
                 </div>
                 <div className="form-group">
-                    <label for="email">Email address</label>
                     <input
                         type="email"
                         name="email"
@@ -139,7 +144,6 @@ class SignUpFormBase extends Component {
                     <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
                 </div>
                 <div className="form-group">
-                    <label for="passwordOne">Password</label>
                     <input
                         type="password"
                         name="passwordOne"
@@ -150,7 +154,6 @@ class SignUpFormBase extends Component {
                         placeholder="Enter Password" />
                 </div>
                 <div className="form-group">
-                    <label for="passwordTwo">Confirm Password</label>
                     <input
                         type="password"
                         name="passwordTwo"
@@ -158,14 +161,14 @@ class SignUpFormBase extends Component {
                         onChange={this.onChange}
                         className="form-control"
                         id="passwordTwo"
-                        placeholder="Enter Password Again" />
+                        placeholder="Confirm Password" />
                 </div>
-                <div className="form-group form-check">
-                    <input type="checkbox" className="form-check-input" id="check" />
-                    <label className="form-check-label" for="check">I agree to the terms and conditions</label>
+                <div className="text-center">
+                    <small className="form-text">By clicking Sign up, you agree to the Terms and Conditions of Use.</small>
+                    <button type="submit" disabled={isInvalid} className="btn btn-success my-2 rounded">Sign Up</button>
+                    {error && <p className="text-danger">{error.message}</p>}
+                    <p>Already have an account? <Link to={ROUTES.LOGIN}>Login</Link></p>
                 </div>
-                <button type="submit" disabled={isInvalid} className="btn btn-primary">Sign Up</button>
-                {error && <p>{error.message}</p>}
             </form>
         )
     }
@@ -173,8 +176,7 @@ class SignUpFormBase extends Component {
 
 const SignUpLink = () => (
     <p>
-        Don't have an account?
-        <Link to={ROUTES.SIGN_UP}> Sign Up</Link>
+        Don't have an account? <Link to={ROUTES.SIGN_UP}>Sign Up</Link>
     </p>
 );
 

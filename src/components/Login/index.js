@@ -11,15 +11,19 @@ import * as ROUTES from '../../constants/routes';
 
 export default function Login() {
     return (
-        <div className="container mt-4">
-            <h1 className="mb-2">Log In</h1>
-            <SignInForm />
-            <ForgotPasswordLink />
-            <SignUpLink /><div className="text-center">
-                <p>Login with</p>
+        <div className="vh-100 d-flex align-items-center justify-content-center bg-light">
+            <div className="card border-0 shadow my-auto w-75 rounded min-width" style={{ maxWidth: "500px", }}>
+                <div className="card-body">
+                    <h1 className="text-center mb-5">Notepad</h1>
+                    <h6 className="text-center" >To continue, login to Notepad</h6>
+                    <SignInGoogle />
+                    <hr className="my-4" />
+                    <SignInForm />
+                    <ForgotPasswordLink />
+                    <SignUpLink />
+                </div>
             </div>
-            <SignInGoogle />
-        </div>
+        </div >
     )
 }
 
@@ -67,7 +71,6 @@ class LoginFormBase extends Component {
         return (
             <form onSubmit={this.onSubmit}>
                 <div className="form-group">
-                    <label for="email">Email Address</label>
                     <input
                         type="text"
                         name="email"
@@ -75,10 +78,9 @@ class LoginFormBase extends Component {
                         onChange={this.onChange}
                         className="form-control"
                         id="email"
-                        placeholder="Enter Email Address" />
+                        placeholder="Email Address" />
                 </div>
                 <div className="form-group">
-                    <label for="password">Password</label>
                     <input
                         type="password"
                         name="password"
@@ -86,10 +88,12 @@ class LoginFormBase extends Component {
                         onChange={this.onChange}
                         className="form-control"
                         id="password"
-                        placeholder="Enter Password" />
+                        placeholder="Password" />
                 </div>
-                <button type="submit" disabled={isInvalid} className="btn btn-primary">Log In</button>
-                {error && <p>{error.message}</p>}
+                <div className="text-center">
+                    <button type="submit" disabled={isInvalid} className="btn btn-success my-2 rounded">Log in</button>
+                    {error && <p className="text-danger">{error.message}</p>}
+                </div>
             </form>
         )
     }
@@ -143,9 +147,9 @@ class SignInGoogleBase extends Component {
     render() {
         const { error } = this.state;
         return (
-            <div className="w-100 d-flex">
-                <FontAwesomeIcon icon={faGoogle} size="2x" onClick={this.onSubmit} className="cursor-pointer mx-auto" />
-                {error && <p>{error.message}</p>}
+            <div onClick={this.onSubmit} className="btn btn-primary w-100" style={{ backgroundColor: "#4885ed" }}>
+                <FontAwesomeIcon icon={faGoogle} size="md" className="cursor-pointer mx-auto" />
+                <span className="ml-2">Continue with Google</span>
             </div>
         );
     }
