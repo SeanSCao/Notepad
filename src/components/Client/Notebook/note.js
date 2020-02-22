@@ -15,6 +15,9 @@ import { debounce } from 'lodash';
 import { withFirebase } from '../../Firebase';
 import { CustomEditor, Portal } from './editor';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBold, faUnderline, faHeading, faCode, faItalic, faListUl, faListOl, faUnlink } from '@fortawesome/free-solid-svg-icons';
+
 const Note = (props) => {
     const ref = useRef();
     const defaultValue = [
@@ -34,6 +37,14 @@ const Note = (props) => {
     const [title, setTitle] = useState('');
     const [uid, setUid] = useState('');
     const [chars, setChars] = useState([]);
+
+    const [bold, setBold] = useState(false);
+    const [italic, setItalic] = useState(false);
+    const [code, setCode] = useState(false);
+    const [underline, setUnderline] = useState(false);
+    const [heading, setHeading] = useState(false);
+    const [ol, setOl] = useState(false);
+    const [ul, setUl] = useState(false);
 
     const renderElement = useCallback(props => <Element {...props} />, []);
     const renderLeaf = useCallback(props => <Leaf {...props} />, []);
@@ -177,77 +188,85 @@ const Note = (props) => {
                         name="title"
                         value={title}
                         onChange={onChangeTitle}
-                        className="form-control-lg pl-0 border-0"
+                        className="form-control-lg pl-0 border-0 font-weight-bold"
                         id="title" />
                 </div>
             </form>
 
             <Slate editor={editor} value={value} onChange={onChange}>
                 <div>
-                    <button
+                    <FontAwesomeIcon
+                        icon={faBold}
+                        size="md"
+                        color={bold ? "black" : "black"}
+                        className="cursor-pointer mx-2"
+                        onMouseDown={event => {
+                            event.preventDefault();
+                            setBold(!bold);
+                            CustomEditor.toggleMark(editor, 'bold');
+                        }} />
+                    <FontAwesomeIcon
+                        icon={faUnderline}
+                        size="md"
+                        color={underline ? "black" : "black"}
+                        className="cursor-pointer mx-2"
                         onMouseDown={event => {
                             event.preventDefault()
-                            CustomEditor.toggleMark(editor, 'bold')
-                        }}>
-                        Bold
-                    </button>
-                    <button
-                        onMouseDown={event => {
-                            event.preventDefault()
+                            setUnderline(!underline);
                             CustomEditor.toggleMark(editor, 'underline')
-                        }}>
-                        Underline
-                    </button>
-                    <button
+                        }} />
+                    <FontAwesomeIcon
+                        icon={faItalic}
+                        size="md"
+                        color={italic ? "black" : "black"}
+                        className="cursor-pointer mx-2"
                         onMouseDown={event => {
-                            event.preventDefault()
-                            CustomEditor.toggleMark(editor, 'italic')
-                        }}>
-                        Italic
-                    </button>
-                    <button
+                            event.preventDefault();
+                            setItalic(!italic);
+                            CustomEditor.toggleMark(editor, 'italic');
+                        }} />
+                    <FontAwesomeIcon
+                        icon={faCode}
+                        size="md"
+                        color={code ? "black" : "black"}
+                        className="cursor-pointer mx-2"
                         onMouseDown={event => {
-                            event.preventDefault()
-                            CustomEditor.toggleBlock(editor, 'code')
-                        }}>
-                        Code
-                    </button>
-                    <button
+                            event.preventDefault();
+                            setCode(!code);
+                            CustomEditor.toggleBlock(editor, 'code');
+                        }} />
+                    <FontAwesomeIcon
+                        icon={faHeading}
+                        size="md"
+                        color={heading ? "black" : "black"}
+                        className="cursor-pointer mx-2"
                         onMouseDown={event => {
-                            event.preventDefault()
-                            CustomEditor.toggleBlock(editor, 'h1')
-                        }}>
-                        H1
-                    </button>
-                    <button
+                            event.preventDefault();
+                            setHeading(!heading);
+                            CustomEditor.toggleBlock(editor, 'h1');
+                        }} />
+                    <FontAwesomeIcon
+                        icon={faListOl}
+                        size="md"
+                        color={ol ? "black" : "black"}
+                        className="cursor-pointer mx-2"
                         onMouseDown={event => {
-                            event.preventDefault()
-                            CustomEditor.toggleBlock(editor, 'h2')
-                        }}>
-                        H2
-                    </button>
-                    <button
+                            event.preventDefault();
+                            setOl(!ol);
+                            CustomEditor.toggleBlock(editor, 'numbered-list');
+                        }} />
+                    <FontAwesomeIcon
+                        icon={faListUl}
+                        size="md"
+                        color={ul ? "black" : "black"}
+                        className="cursor-pointer mx-2"
                         onMouseDown={event => {
-                            event.preventDefault()
-                            CustomEditor.toggleBlock(editor, 'h3')
-                        }}>
-                        H3
-                    </button>
-                    <button
-                        onMouseDown={event => {
-                            event.preventDefault()
-                            CustomEditor.toggleBlock(editor, 'numbered-list')
-                        }}>
-                        OL
-                    </button>
-                    <button
-                        onMouseDown={event => {
-                            event.preventDefault()
-                            CustomEditor.toggleBlock(editor, 'bulleted-list')
-                        }}>
-                        UL
-                    </button>
+                            event.preventDefault();
+                            setUl(!ul);
+                            CustomEditor.toggleBlock(editor, 'bulleted-list');
+                        }} />
                 </div>
+                <hr />
                 <Editable
                     renderElement={renderElement}
                     renderLeaf={renderLeaf}

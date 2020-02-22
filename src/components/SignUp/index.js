@@ -14,7 +14,7 @@ function SignUp() {
                 <div className="card-body">
                     <h1 className="text-center mb-5">Notepad</h1>
                     <SignInGoogle />
-                    <hr className="my-4" />
+                    <hr className="my-4 hr-or" />
                     <SignUpForm />
                 </div>
             </div>
@@ -98,10 +98,7 @@ class SignUpFormBase extends Component {
     onChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     };
-
-    handleCheckboxChange = event =>
-        this.setState({ terms: event.target.checked })
-
+    
     render() {
         const {
             username,

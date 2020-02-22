@@ -29,30 +29,16 @@ code {
   outline: none;
 }
 
-.hr-text {
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-}
-
-.hr-text:before,
-.hr-text:after {
-  content: "";
-  flex: 1 1;
-  border-bottom: 1px solid #000;
-  margin: -5px 10px;
-}
-
-hr {
+.hr-or {
   border: none;
-  border-top: 3px double #333;
-  color: #333;
+  border-top: 1px solid #333;
+  color: #666666;
   overflow: visible;
   text-align: center;
   height: 5px;
 }
 
-hr:after {
+.hr-or:after {
   background: #fff;
   content: 'or';
   padding: 0 6px;

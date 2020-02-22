@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withFirebase } from '../../Firebase';
+
 const INITIAL_STATE = {
     passwordOne: '',
     passwordTwo: '',
@@ -55,7 +56,7 @@ class PasswordChangeForm extends Component {
                 </div>
                 <button disabled={isInvalid} type="submit" className="btn btn-primary">
                     Reset My Password
-        </button>
+                </button>
                 {error && <p>{error.message}</p>}
             </form>
         );

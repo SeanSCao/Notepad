@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { compose } from 'recompose';
 
 import { AuthUserContext, withAuthorization, withEmailVerification } from '../../Session';
 import { withFirebase } from '../../Firebase';
-import { ForgotPasswordForm } from '../../ForgotPassword';
 import PasswordChangeForm from '../PasswordChange';
+import * as ROUTES from '../../../constants/routes';
 
 const SIGN_IN_METHODS = [
     {
@@ -20,13 +21,26 @@ const SIGN_IN_METHODS = [
 const Account = () => (
     <AuthUserContext.Consumer>
         {authUser => (
-            <div className="col ml-2 mt-2">
-                <h1>Account: {authUser.email}</h1>
-                <h2>Forgot Password</h2>
-                <ForgotPasswordForm />
-                <h2>Change Password</h2>
-                <PasswordChangeForm />
-                <LoginManagement authUser={authUser} />
+            <div className="col px-4 pt-2 overflow-hidden border-right bg-light" style={{ maxWidth: "750px", }}>
+                <h2>Account Summary</h2>
+                <hr />
+                <div className="row mt-5">
+                    <div className="col">
+                        <p className="m-0 font-weight-bold">Name</p>
+                    </div>
+                    <div className="col">{authUser.username}</div>
+                </div>
+                <hr />
+                <div className="row">
+                    <div className="col">
+                        <p className="m-0 font-weight-bold">Email</p>
+                    </div>
+                    <div className="col">{authUser.email}</div>
+                </div>
+                <hr />
+                {/* <Link to={ROUTES.EDIT_PROFILE} className="btn btn-outline-secondary">Edit Profile</Link> */}
+                {/* <PasswordChangeForm /> */}
+                {/* <LoginManagement authUser={authUser} /> */}
             </div>
         )}
     </AuthUserContext.Consumer>

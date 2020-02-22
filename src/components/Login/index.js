@@ -17,7 +17,7 @@ export default function Login() {
                     <h1 className="text-center mb-5">Notepad</h1>
                     <h6 className="text-center" >To continue, login to Notepad</h6>
                     <SignInGoogle />
-                    <hr className="my-4" />
+                    <hr className="my-4 hr-or" />
                     <SignInForm />
                     <ForgotPasswordLink />
                     <SignUpLink />

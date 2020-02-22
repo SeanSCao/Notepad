@@ -13,6 +13,7 @@ export const NOTEBOOK = '/client/notebook';
 export const NOTEBOOK_NOTE = '/client/notebook/:id';
 
 export const ACCOUNT = '/client/account';
+export const EDIT_PROFILE = '/client/profile';
 
 export const ADMIN = '/client/admin';
 export const ADMIN_USER_DETAILS = '/client/admin/user/:id';
